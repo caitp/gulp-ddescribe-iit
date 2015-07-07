@@ -21,6 +21,7 @@
     "mocha": "^2.2.5"
   },
   "dependencies": {
+    "gulp-util": "^3.0.6",
     "through2": "^2.0.0"
   }
 }
