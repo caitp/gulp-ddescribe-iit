@@ -1,0 +1,22 @@
+{
+  "name": "gulp-ddescribe-iit",
+  "version": "1.0.0",
+  "description": "Don't accidentally disable all your tests!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gulp",
+    "jasmine",
+    "testing",
+    "angular",
+    "oops",
+    "derp"
+  ],
+  "author": "Caitlin Potter <caitpotter88@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}
