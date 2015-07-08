@@ -11,13 +11,9 @@ describe('gulp-ddescribe-iit', function() {
   function step(fn) {
     return function() {
       stream.domain = test;
-      try {
-        var args = [];
-        for (var i = 0; i < arguments.length; ++i) args.push(arguments[i]);
-        fn.apply(this, args);
-      } catch (e) {
-        throw e;
-      }
+      var args = [];
+      for (var i = 0; i < arguments.length; ++i) args.push(arguments[i]);
+      fn.apply(this, args);
       stream.domain = null;
     }
   }
