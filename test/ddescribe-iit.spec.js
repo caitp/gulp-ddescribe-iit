@@ -60,8 +60,7 @@ describe('gulp-ddescribe-iit', function() {
         "  | ^^^^^^^^^",
         ""
       ].join("\n"));
-      var errors = err.message.split('\n\n');
-      expect(errors.length).to.eql(4);
+      expect(err.raw.length).to.eql(4);
       stream.domain = null;
     }));
     stream.once('finish', function() {
@@ -88,8 +87,7 @@ describe('gulp-ddescribe-iit', function() {
     var called = false;
     stream.once('error', step(function(err) {
       called = true;
-      var errors = err.message.split('\n\n');
-      expect(errors.length).to.eql(2);
+      expect(err.raw.length).to.eql(2);
     }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
@@ -133,8 +131,7 @@ describe('gulp-ddescribe-iit', function() {
     var called = false;
     stream.once('error', step(function(err) {
       called = true;
-      var errors = err.message.split('\n\n');
-      expect(errors.length).to.eql(2);
+      expect(err.raw.length).to.eql(2);
     }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
