@@ -1,6 +1,6 @@
 {
   "name": "gulp-ddescribe-iit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Don't accidentally disable all your tests!",
   "main": "index.js",
   "scripts": {
