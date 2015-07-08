@@ -29,6 +29,7 @@ gulp.src('my-files/**/*.test.js').
 | Option                         | Description                            
 |--------------------------------|----------------------------------------
 | `allowDisabledTests`           | If set to a defined falsy value, will report errors when `xit` or `xdescribe` are used. Defaults to true
+| `noColor`                      | Defaults to `true` --- If false, disables color output.
 
 ##License
 
