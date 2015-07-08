@@ -22,6 +22,17 @@ describe('gulp-ddescribe-iit', function() {
     }
   }
 
+  function simplifyError(err) {
+    return err.raw.map(function(e) {
+      return {
+        file: e.file,
+        line: e.line,
+        column: e.column,
+        str: e.str
+      };
+    });
+  }
+
   it('should report multiple errors in same file', function(done) {
     var mockFile = new File({
       path: 'mock-file.js',
@@ -61,7 +72,32 @@ describe('gulp-ddescribe-iit', function() {
         ""
       ].join("\n"));
       expect(err.raw.length).to.eql(4);
-      stream.domain = null;
+      expect(simplifyError(err)).to.deep.equal([
+        {
+          file: 'mock-file.js',
+          line: 1,
+          column: 1,
+          str: 'iit'
+        },
+        {
+          file: 'mock-file.js',
+          line: 2,
+          column: 1,
+          str: 'ddescribe'
+        },
+        {
+          file: 'mock-file.js',
+          line: 3,
+          column: 1,
+          str: 'fit'
+        },
+        {
+          file: 'mock-file.js',
+          line: 4,
+          column: 1,
+          str: 'fdescribe'
+        }
+      ]);
     }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
@@ -88,6 +124,20 @@ describe('gulp-ddescribe-iit', function() {
     stream.once('error', step(function(err) {
       called = true;
       expect(err.raw.length).to.eql(2);
+        expect(simplifyError(err)).to.deep.equal([
+        {
+          file: 'mock-file1.js',
+          line: 1,
+          column: 1,
+          str: 'iit'
+        },
+        {
+          file: 'mock-file2.js',
+          line: 1,
+          column: 1,
+          str: 'ddescribe'
+        }
+      ]);
     }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
