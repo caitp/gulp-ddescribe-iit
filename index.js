@@ -17,15 +17,16 @@ function ddescribeIit(opt) {
   })();
 
   var colors = {
-    red: {
-      open: supports_colors ? '\u001b[' + 31 + 'm' : '',
-      close: supports_colors ? '\u001b[' + 39 + 'm' : ''
-    },
-    gray: {
-      open: supports_colors ? '\u001b[' + 90 + 'm' : '',
-      close: supports_colors ? '\u001b[' + 39 + 'm' : ''
-    }
+    red: color(31, 39),
+    gray: color(90, 39)
   };
+  function color(open, close) {
+    if (!supports_colors) return null;
+    return {
+      open: '\u001b[' + open + 'm',
+      close: '\u001b[' + close + 'm'
+    };
+  }
 
   function getOrDefault(o, key, def) {
     var val = o[key];
