@@ -37,6 +37,12 @@ function ddescribeIit(opt) {
 
   var allowDisabledTests = getOrDefault(opt, 'allowDisabledTests', true);
   var basePath = getOrDefault(opt, 'basePath', process.cwd());
+  var tabWidth = getOrDefault(opt, 'tabWidth', 4);
+  if (typeof tabWidth !== 'number') tabWidth = 4;
+  if (tabWidth < 2) tabWidth = 2;
+  if (tabWidth > 8) tabWidth = 8;
+  var tabString = '  ';
+  while (tabString.length < tabWidth) tabString += ' ';
 
   var BAD_FUNCTIONS = [
     // jasmine / minijasminenode / angular
@@ -64,7 +70,7 @@ function ddescribeIit(opt) {
     BAD_FUNCTIONS = BAD_FUNCTIONS.concat(DISABLED_TEST_FUNCTIONS);
   }
 
-  function makeErrorContext(lines, lineNo, column, word) {
+  function makeErrorContext(lines, lineNo, column, word, renderColumn) {
     var before = lineNo > 1 ? lines[lineNo - 2] : null;
     var after = lineNo < lines.length ? lines[lineNo] : null;
     var current = lines[lineNo - 1];
@@ -72,7 +78,7 @@ function ddescribeIit(opt) {
     var result = '';
     if (before !== null) result += (normalize(lines.length, lineNo - 1) + before + '\n');
     result += (normalize(lines.length, lineNo) + current + '\n');
-    result += (normalize(lines.length, lineNo, true) + underline(column - 1, word.length) + '\n');
+    result += (normalize(lines.length, lineNo, true) + underline(renderColumn - 1, word.length) + '\n');
     if (after !== null) result += (normalize(lines.length, lineNo + 1) + after + '\n');
 
     return result;
@@ -111,31 +117,44 @@ function ddescribeIit(opt) {
     var path = file.path;
     var contents = file.contents.toString();
     var originalContents = contents;
+    var renderContents = originalContents.replace(/\t/g, tabString);
     var lines = originalContents.split('\n');
+    var renderLines = renderContents.split('\n');
     var start = 0;
-    var lineStarts = lines.map(function(line) {
+    var lineStarts = lines.map(lineStartMapper);
+    start = 0;
+    var renderLineStarts = renderLines.map(lineStartMapper);
+    function lineStartMapper(line) {
       var l = start;
       start += (line.length + 1);
       return l;
-    });
+    }
     var pos = 0;
+    var renderPos = 0;
     var match;
     while (match = regexp.exec(contents)) {
+      var renderMatch = regexp.exec(renderContents);
       var index = pos + match.index + match[1].length;
+      var renderIndex = renderPos + renderMatch.index + renderMatch[1].length;
       pos = index + match[2].length - 1;
+      renderPos = renderIndex + renderMatch[2].length - 1;
       contents = contents.slice(match.index + match[1].length + match[2].length);
+      renderContents = renderContents.slice(renderMatch.index + renderMatch[1].length +
+                                            renderMatch[2].length);
 
       // Location of error
       var lineNo = originalContents.substr(0, pos).split('\n').length;
       var lineStart = lineStarts[lineNo - 1];
+      var renderLineStart = renderLineStarts[lineNo - 1];
       var column = max(1, (index - lineStart) + 1);
+      var renderColumn = max(1, (renderIndex - renderLineStart) + 1);
 
       errors.push({
         file: toRelativePath(basePath, file.path),
         str: match[2],
         line: lineNo,
         column: column,
-        context: makeErrorContext(lines, lineNo, column, match[2])
+        context: makeErrorContext(renderLines, lineNo, column, match[2], renderColumn)
       });
     }
     cb();
