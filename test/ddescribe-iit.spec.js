@@ -1,19 +1,36 @@
+"use strict";
 var chai = require('chai');
 var ddescribeIit = require('../');
 var expect = chai.expect;
 var File = require('vinyl');
 
 describe('gulp-ddescribe-iit', function() {
+  var test, stream;
+  beforeEach(function() { test = this.test; });
+
+  function step(fn) {
+    return function() {
+      stream.domain = test;
+      try {
+        var args = [];
+        for (var i = 0; i < arguments.length; ++i) args.push(arguments[i]);
+        fn.apply(this, args);
+      } catch (e) {
+        throw e;
+      }
+      stream.domain = null;
+    }
+  }
+
   it('should report multiple errors in same file', function(done) {
     var mockFile = new File({
       path: 'mock-file.js',
       contents: new Buffer('iit();\nddescribe();\nfit();\nfdescribe();')
     });
 
-    var stream = ddescribeIit({ noColor: true });
-
+    stream = ddescribeIit({ noColor: true });
     var called = false;
-    stream.once('error', function(err) {
+    stream.once('error', step(function(err) {
       called = true;
       expect(err.message).to.equal([
         "",
@@ -45,7 +62,8 @@ describe('gulp-ddescribe-iit', function() {
       ].join("\n"));
       var errors = err.message.split('\n\n');
       expect(errors.length).to.eql(4);
-    });
+      stream.domain = null;
+    }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
       done();
@@ -65,14 +83,14 @@ describe('gulp-ddescribe-iit', function() {
       contents: new Buffer('ddescribe();')
     });
 
-    var stream = ddescribeIit();
+    stream = ddescribeIit();
 
     var called = false;
-    stream.once('error', function(err) {
+    stream.once('error', step(function(err) {
       called = true;
       var errors = err.message.split('\n\n');
       expect(errors.length).to.eql(2);
-    });
+    }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
       done();
@@ -89,12 +107,12 @@ describe('gulp-ddescribe-iit', function() {
       contents: new Buffer('xit();\nxdescribe();')
     });
 
-    var stream = ddescribeIit();
+    stream = ddescribeIit();
 
     var called = false;
-    stream.once('error', function(err) {
+    stream.once('error', step(function(err) {
       called = true;
-    });
+    }));
     stream.once('finish', function() {
       expect(called).to.eql(false);
       done();
@@ -110,14 +128,14 @@ describe('gulp-ddescribe-iit', function() {
       contents: new Buffer('xit();\nxdescribe();')
     });
 
-    var stream = ddescribeIit({ allowDisabledTests: false });
+    stream = ddescribeIit({ allowDisabledTests: false });
 
     var called = false;
-    stream.once('error', function(err) {
+    stream.once('error', step(function(err) {
       called = true;
       var errors = err.message.split('\n\n');
       expect(errors.length).to.eql(2);
-    });
+    }));
     stream.once('finish', function() {
       expect(called).to.eql(true);
       done();
