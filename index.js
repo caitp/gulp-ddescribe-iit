@@ -3,6 +3,7 @@ var PluginError = require('gulp-util').PluginError;
 
 module.exports = ddescribeIit;
 function ddescribeIit(opt) {
+  'use strict';
   var supports_colors = (function() {
     if (process.argv.indexOf('--no-color') !== -1) return false;
     if (process.stdout && !process.stdout.isTTY) return false;
