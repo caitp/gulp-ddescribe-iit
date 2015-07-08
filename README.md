@@ -30,6 +30,7 @@ gulp.src('my-files/**/*.test.js').
 |--------------------------------|----------------------------------------
 | `allowDisabledTests`           | If set to a defined falsy value, will report errors when `xit` or `xdescribe` are used. Defaults to true
 | `noColor`                      | Defaults to `true` --- If false, disables color output.
+| `basePath`                     | Defaults to current working directory --- Used to determine relative path of file. If falsy, uses unmodified path.
 
 ## License
 

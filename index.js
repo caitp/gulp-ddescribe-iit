@@ -1,4 +1,5 @@
 var through2 = require('through2');
+var path = require('path');
 var PluginError = require('gulp-util').PluginError;
 
 module.exports = ddescribeIit;
@@ -35,6 +36,7 @@ function ddescribeIit(opt) {
   }
 
   var allowDisabledTests = getOrDefault(opt, 'allowDisabledTests', true);
+  var basePath = getOrDefault(opt, 'basePath', process.cwd());
 
   var BAD_FUNCTIONS = [
     // jasmine / minijasminenode / angular
@@ -129,7 +131,7 @@ function ddescribeIit(opt) {
       var column = max(1, (index - lineStart) + 1);
 
       errors.push({
-        file: file.path,
+        file: toRelativePath(basePath, file.path),
         str: match[2],
         line: lineNo,
         column: column,
@@ -139,13 +141,15 @@ function ddescribeIit(opt) {
     cb();
   }, function flushStream(cb) {
     if (errors.length) {
-      this.emit('error', new PluginError('ddescribe-iit', {
+      var error = new PluginError('ddescribe-iit', {
         message: '\n' + errors.map(function(error) {
           return 'Found `' + error.str + '` in ' + error.file + ':' + error.line + ':' + error.column + '\n' +
                  error.context;
         }).join('\n\n'),
         showStack: false
-      }));
+      });
+      error.raw = errors;
+      this.emit('error', error);
       cb();
     }
   });
@@ -167,5 +171,10 @@ function ddescribeIit(opt) {
     var c = colors[code];
     if (!c) return str;
     return '' + c.open + str + c.close;
+  }
+
+  function toRelativePath(basePath, filePath) {
+    if (!basePath) return filePath;
+    return path.relative(basePath, filePath);
   }
 }

@@ -143,4 +143,24 @@ describe('gulp-ddescribe-iit', function() {
 
     stream.end(mockFile);
   });
+
+
+  it('should render path of file relative to `basePath` if specified', function(done) {
+    var mockFile = new File({
+      path: '/foo/bar/baz.js',
+      contents: new Buffer('it.only();')
+    });
+    stream = ddescribeIit({ basePath: '/foo/bar/' });
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.raw.length).to.eql(1);
+      expect(err.raw[0].file).to.eql('baz.js');
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });
