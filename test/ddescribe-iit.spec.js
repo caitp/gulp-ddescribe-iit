@@ -230,4 +230,23 @@ describe('gulp-ddescribe-iit', function() {
     });
     stream.end(mockFile);
   });
+
+
+  it('should not render `raw` error list in PluginError', function(done) {
+    var mockFile = new File({
+      path: '/foo/bar/baz.js',
+      contents: new Buffer('describe.only();')
+    });
+    stream = ddescribeIit();
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.toString()).not.to.include('Details:');
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });

@@ -146,7 +146,8 @@ function ddescribeIit(opt) {
           return 'Found `' + error.str + '` in ' + error.file + ':' + error.line + ':' + error.column + '\n' +
                  error.context;
         }).join('\n\n'),
-        showStack: false
+        showStack: false,
+        showProperties: false
       });
       error.raw = errors;
       this.emit('error', error);
