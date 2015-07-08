@@ -141,7 +141,7 @@ function ddescribeIit(opt) {
     cb();
   }, function flushStream(cb) {
     if (errors.length) {
-      var error = new PluginError('ddescribe-iit', {
+      var error = new PluginError('gulp-ddescribe-iit', {
         message: '\n' + errors.map(function(error) {
           return 'Found `' + error.str + '` in ' + error.file + ':' + error.line + ':' + error.column + '\n' +
                  error.context;
