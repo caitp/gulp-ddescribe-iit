@@ -1,4 +1,4 @@
-gulp-ddescribe--it
+gulp-ddescribe-iit
 ==================
 
 Based on @btford's [grunt-ddescribe-iit](https://github.com/btford/grunt-ddescribe-iit),
