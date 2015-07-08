@@ -31,7 +31,7 @@ gulp.task('ddescribe-iit', function(done) {
 | Option                         | Description                            
 |--------------------------------|----------------------------------------
 | `allowDisabledTests`           | If set to a defined falsy value, will report errors when `xit` or `xdescribe` are used. Defaults to true
-| `noColor`                      | Defaults to `true` --- If false, disables color output.
+| `noColor`                      | Defaults to `false` --- If true, disables color output.
 | `basePath`                     | Defaults to current working directory --- Used to determine relative path of file. If falsy, uses unmodified path.
 
 ## License
