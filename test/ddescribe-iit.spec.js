@@ -1,6 +1,5 @@
 var chai = require('chai');
 var ddescribeIit = require('../');
-var es = require('event-stream');
 var expect = chai.expect;
 var File = require('vinyl');
 
