@@ -20,8 +20,10 @@ This is super important, I'm glad you asked. I spent a good few minutes trying t
 var ddescribeIit = require('gulp-ddescribe-iit');
 
 // I mean, that's basically it --- there isn't much to it.
-gulp.src('my-files/**/*.test.js').
-    pipe(ddescribeIit({ allowDisabledTests: false }));
+gulp.task('ddescribe-iit', function(done) {
+  return gulp.src(['modules/**/*.spec.ts', 'modules/**/*_spec.ts']).
+     pipe(ddescribeIit({ allowDisabledTests: false }));
+});
 ```
 
 ## Options
