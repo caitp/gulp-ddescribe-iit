@@ -357,4 +357,32 @@ describe('gulp-ddescribe-iit', function() {
     });
     stream.end(mockFile);
   });
+
+
+  it('should render context for tab-indented files nicely (tabWidth!==number)', function(done) {
+    var mockFile = new File({
+      path: 'mock-file.js',
+      contents: new Buffer('random_stuff();\n\t\tdescribe.only();\n' +
+                           '\t\tif(true) {\n\t\t\tbloop();\n\t\t}\n')
+    });
+    stream = ddescribeIit({ noColor: true, tabWidth: {} });
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.message).to.eql([
+          "",
+          "Found `describe.only` in mock-file.js:2:3",
+          " 1| random_stuff();",
+          " 2|         describe.only();",
+          "  |         ^^^^^^^^^^^^^",
+          " 3|         if(true) {",
+          ""
+        ].join("\n"));
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });
