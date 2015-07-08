@@ -3,6 +3,7 @@ gulp-ddescribe-iit
 
 [![Build Status](https://travis-ci.org/caitp/gulp-ddescribe-iit.svg?branch=master)](https://travis-ci.org/caitp/gulp-ddescribe-iit)
 [![dependencies](https://img.shields.io/david/caitp/gulp-ddescribe-iit.svg?style=flat)](https://david-dm.org/caitp/gulp-ddescribe-iit)
+[![NPM Version](http://img.shields.io/npm/v/gulp-ddescribe-iit.svg)](https://www.npmjs.org/package/gulp-ddescribe-iit)
 
 Based on @btford's [grunt-ddescribe-iit](https://github.com/btford/grunt-ddescribe-iit),
 with a gulp and ANSI color makeover.
