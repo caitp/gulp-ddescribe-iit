@@ -4,7 +4,9 @@ var PluginError = require('gulp-util').PluginError;
 module.exports = ddescribeIit;
 function ddescribeIit(opt) {
   'use strict';
+  opt = opt || { allowDisabledTests: true, noColor: false };
   var supports_colors = (function() {
+    if (opt.noColor) return false;
     if (process.argv.indexOf('--no-color') !== -1) return false;
     if (process.stdout && !process.stdout.isTTY) return false;
     if (process.platform === 'win32') return true;
@@ -24,8 +26,6 @@ function ddescribeIit(opt) {
       close: supports_colors ? '\u001b[' + 39 + 'm' : ''
     }
   };
-
-  opt = opt || { allowDisabledTests: true };
 
   function getOrDefault(o, key, def) {
     var val = o[key];
@@ -112,7 +112,7 @@ function ddescribeIit(opt) {
     var start = 0;
     var lineStarts = lines.map(function(line) {
       var l = start;
-      start += line.length;
+      start += (line.length + 1);
       return l;
     });
     var pos = 0;
@@ -125,7 +125,7 @@ function ddescribeIit(opt) {
       // Location of error
       var lineNo = originalContents.substr(0, pos).split('\n').length;
       var lineStart = lineStarts[lineNo - 1];
-      var column = max(1, index - lineStart);
+      var column = max(1, (index - lineStart) + 1);
 
       errors.push({
         file: file.path,

@@ -10,11 +10,39 @@ describe('gulp-ddescribe-iit', function() {
       contents: new Buffer('iit();\nddescribe();\nfit();\nfdescribe();')
     });
 
-    var stream = ddescribeIit();
+    var stream = ddescribeIit({ noColor: true });
 
     var called = false;
     stream.once('error', function(err) {
       called = true;
+      expect(err.message).to.equal([
+        "",
+        "Found `iit` in mock-file.js:1:1",
+        " 1| iit();",
+        "  | ^^^",
+        " 2| ddescribe();",
+        "",
+        "",
+        "Found `ddescribe` in mock-file.js:2:1",
+        " 1| iit();",
+        " 2| ddescribe();",
+        "  | ^^^^^^^^^",
+        " 3| fit();",
+        "",
+        "",
+        "Found `fit` in mock-file.js:3:1",
+        " 2| ddescribe();",
+        " 3| fit();",
+        "  | ^^^",
+        " 4| fdescribe();",
+        "",
+        "",
+        "Found `fdescribe` in mock-file.js:4:1",
+        " 3| fit();",
+        " 4| fdescribe();",
+        "  | ^^^^^^^^^",
+        ""
+      ].join("\n"));
       var errors = err.message.split('\n\n');
       expect(errors.length).to.eql(4);
     });
