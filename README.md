@@ -1,6 +1,8 @@
 gulp-ddescribe-iit
 ==================
 
+[![Build Status](https://travis-ci.org/caitp/gulp-ddescribe-iit.svg?branch=master)](https://travis-ci.org/caitp/gulp-ddescribe-iit)
+
 Based on @btford's [grunt-ddescribe-iit](https://github.com/btford/grunt-ddescribe-iit),
 with a gulp and ANSI color makeover.
 
