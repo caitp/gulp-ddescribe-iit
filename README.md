@@ -8,6 +8,12 @@ gulp-ddescribe-iit
 Based on @btford's [grunt-ddescribe-iit](https://github.com/btford/grunt-ddescribe-iit),
 with a gulp and ANSI color makeover.
 
+##Hows it look!?
+
+This is super important, I'm glad you asked. I spent a good few minutes trying to make it look decent.
+
+<img width="315" alt="screen shot 2015-07-07 at 10 13 11 pm" src="https://cloud.githubusercontent.com/assets/2294695/8561561/7783a478-24f5-11e5-9f52-c68a89b5371f.png">
+
 ##Usage
 
 ```js
