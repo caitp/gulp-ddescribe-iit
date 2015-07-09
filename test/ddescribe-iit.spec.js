@@ -385,4 +385,35 @@ describe('gulp-ddescribe-iit', function() {
     });
     stream.end(mockFile);
   });
+
+
+  it('should ignore methods which are not exact matches for forbidden words', function(done) {
+    var mockFile = new File({
+      path: 'mock-file.js',
+      contents: new Buffer([
+        'dddescribe()',
+        'ddescribe_me()',
+        'check_iit()',
+        'iit_all()',
+        'is.it.only()',
+        'it.only.you()',
+        'can.describe.only()',
+        'describe.only.you()',
+        'pfit()',
+        'pfita()',
+        'pfdescribe()',
+        'pfdescribed()'
+        ].join(';\n  \t'))
+    });
+    stream = ddescribeIit();
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(false);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });
