@@ -416,4 +416,95 @@ describe('gulp-ddescribe-iit', function() {
     });
     stream.end(mockFile);
   });
+
+
+  it('should handle member continuations', function(done) {
+    var mockFile = new File({
+      path: 'mock-file.js',
+      contents: new Buffer([
+        'describe  .only()',
+        'describe.  only()',
+        'describe  .  only()',
+        'describe  ["only"]()',
+        'describe["only"]()',
+        'describe[  "only"  ]()',
+        'describe  [\'only\']()',
+        'describe[\'only\']()',
+        'describe[  \'only\'  ]()',
+        ].join(';\n'))
+    });
+    stream = ddescribeIit({ noColor: true });
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.message).to.eql([
+        "",
+        "Found `describe  .only` in mock-file.js:1:1",
+        " 1| describe  .only();",
+        "  | ^^^^^^^^^^^^^^^",
+        " 2| describe.  only();",
+        "",
+        "",
+        "Found `describe.  only` in mock-file.js:2:1",
+        " 1| describe  .only();",
+        " 2| describe.  only();",
+        "  | ^^^^^^^^^^^^^^^",
+        " 3| describe  .  only();",
+        "",
+        "",
+        "Found `describe  .  only` in mock-file.js:3:1",
+        " 2| describe.  only();",
+        " 3| describe  .  only();",
+        "  | ^^^^^^^^^^^^^^^^^",
+        " 4| describe  [\"only\"]();",
+        "",
+        "",
+        "Found `describe  [\"only\"]` in mock-file.js:4:1",
+        " 3| describe  .  only();",
+        " 4| describe  [\"only\"]();",
+        "  | ^^^^^^^^^^^^^^^^^^",
+        " 5| describe[\"only\"]();",
+        "",
+        "",
+        "Found `describe[\"only\"]` in mock-file.js:5:1",
+        " 4| describe  [\"only\"]();",
+        " 5| describe[\"only\"]();",
+        "  | ^^^^^^^^^^^^^^^^",
+        " 6| describe[  \"only\"  ]();",
+        "",
+        "",
+        "Found `describe[  \"only\"  ]` in mock-file.js:6:1",
+        " 5| describe[\"only\"]();",
+        " 6| describe[  \"only\"  ]();",
+        "  | ^^^^^^^^^^^^^^^^^^^^",
+        " 7| describe  ['only']();",
+        "",
+        "",
+        "Found `describe  ['only']` in mock-file.js:7:1",
+        " 6| describe[  \"only\"  ]();",
+        " 7| describe  ['only']();",
+        "  | ^^^^^^^^^^^^^^^^^^",
+        " 8| describe['only']();",
+        "",
+        "",
+        "Found `describe['only']` in mock-file.js:8:1",
+        " 7| describe  ['only']();",
+        " 8| describe['only']();",
+        "  | ^^^^^^^^^^^^^^^^",
+        " 9| describe[  'only'  ]()",
+        "",
+        "",
+        "Found `describe[  'only'  ]` in mock-file.js:9:1",
+        " 8| describe['only']();",
+        " 9| describe[  'only'  ]()",
+        "  | ^^^^^^^^^^^^^^^^^^^^",
+        ""
+      ].join('\n'));
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });

@@ -2,6 +2,9 @@ var through2 = require('through2');
 var path = require('path');
 var PluginError = require('gulp-util').PluginError;
 
+var HEX_DIGITS = '0123456789abcdef'.split('');
+var OCTAL_DIGITS = '01234567'.split('');
+
 module.exports = ddescribeIit;
 function ddescribeIit(opt) {
   'use strict';
@@ -63,7 +66,7 @@ function ddescribeIit(opt) {
     'xit',
     'xdescribe',
 
-    // TODO(@caitp): support mocha `skip()` api?
+    // TODO(@caitp): support mocha `this.skip()` api?
   ];
 
   if (!allowDisabledTests) {
@@ -105,10 +108,86 @@ function ddescribeIit(opt) {
   }
 
   var BAD_FUNCTIONS_SRC = BAD_FUNCTIONS.map(function(fn) {
-    return '(?:' + fn.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')';
+    fn = fn.split('.').
+      reduce(function joinIdentifiers(current, id) {
+        var identifier = transformIdentifier(id);
+        if (!current) return identifier;
+        var stringKey = transformString(id);
+        id =
+          // MemberExpression . Identifier
+          '(?:\\.\\s*' + identifier + ')|' +
+          // MemberExpression [ StringLiteral ]
+          '(?:\\[\\s*\"' + stringKey + '\"\\s*\\])|' +
+          '(?:\\[\\s*\'' + stringKey + '\'\\s*\\])';
+        return current + '\\s*?(?:' + id + ')';
+      }, "");
+    return '(?:' + fn + ')';
+
+    function transformIdentifier(id) {
+      var s = '';
+      for (var i = 0; i < id.length; ++i) {
+        var c = id.charAt(i);
+        var x = toHex4Digits(c);
+        // UnicodeEscapeSequence :: u Hex4Digits
+        var unicode1 = '\\\\u' + x;
+        // UnicodeEscapeSequence :: u { Hex4Digits }
+        var unicode2 = '\\\\u\\{' + x + '\\}';
+        s += '(?:' + c + '|' + unicode1 + '|' + unicode2 + ')';
+      }
+      return s;
+    }
+
+    function transformString(id) {
+      var s = '';
+      for (var i = 0; i < id.length; ++i) {
+        var c = id.charAt(i);
+        var x = toHex4Digits(c);
+        var o = toOctal(c);
+        // UnicodeEscapeSequence :: u Hex4Digits
+        var unicode1 = '\\\\u' + x;
+        // UnicodeEscapeSequence :: u { Hex4Digits }
+        var unicode2 = '\\\\u\\{' + x + '\\}';
+        // HexEscapeSequence :: x HexDigit HexDigit
+        var hex = '\\\\x' + x.slice(2);
+        var octal = '\\\\' + o;
+        s += '(?:' + c + '|(?:' + unicode1 + ')|(?:' + unicode2 + ')|(?:' + hex + ')|(?:' + octal + '))';
+      }
+      return s;
+    }
+    function toHex4Digits(c) {
+      var x = '';
+      var len = 0;
+      c = c.charCodeAt(0);
+      
+      while (c) {
+        var d = HEX_DIGITS[c & 0xF];
+        c >>= 4;
+        ++len;
+        if (/[a-f]/.test(d)) {
+          x = '\\[' + d + d.toUpperCase() + '\\]' + x;
+        } else {
+          x = d + x;
+        }
+      }
+      if (len === 1) x = '000' + x;
+      else if (len === 2) x = '00' + x;
+      else if (len === 3) x = '0' + x;
+      return x;
+    }
+
+    function toOctal(c) {
+      var o = '';
+      var len = 0;
+      c = c.charCodeAt(0);
+      while (c) {
+        o = OCTAL_DIGITS[c & 0x7] + o;
+        len++;
+        c >>= 3;
+      }
+      return o;
+    }
   }).join('|');
   var regexp = new RegExp('(^|\\s)(' + BAD_FUNCTIONS_SRC + ')\\s*\\(', 'm');
-
   var errors = [];
   return through2.obj(function processFile(file, enc, cb) {
     if (file.isNull()) return cb(null, file);
