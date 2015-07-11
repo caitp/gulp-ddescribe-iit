@@ -513,7 +513,10 @@ describe('gulp-ddescribe-iit', function() {
     var mockFile = new File({
       path: 'mock-file.js',
       contents: new Buffer(
-        '\n\t  describe  \t.\n\n\t\t\tonly(function() {  \n});//This should look good!')
+        '\n\t  describe  \t.  \n\n\t\t\tonly();\n//This should look good!' +
+        '\n\t  describe  \t.\n\n\t\t\tonly(function() {  \n\t\t\t}); //This should look good!' +
+        '\n\t  describe  \t\n\t\t[  "only"  ]();\n//This should look good!' +
+        '\n\t  describe  \t\n\t\t[ \'only\'  ](function() {  \n\t\t\t});\n//This should look good!')
     });
     stream = ddescribeIit({ noColor: true });
     var called = false;
@@ -522,13 +525,41 @@ describe('gulp-ddescribe-iit', function() {
       expect(err.message).to.eql([
         "",
         "Found `describe.only` in mock-file.js:2:4",
-        " 1| ",
-        " 2|       describe      .",
-        "  |       ^^^^^^^^^^^^^^^",
-        " 2| ",
-        " 3|             only(function() {  ",
-        "  |             ^^^^",
-        " 5| });//This should look good!",
+        "  1| ",
+        "  2|       describe      .  ",
+        "   |       ^^^^^^^^^^^^^^^",
+        "  2| ",
+        "  3|             only();",
+        "   |             ^^^^",
+        "  5| //This should look good!",
+        "",
+        "",
+        "Found `describe.only` in mock-file.js:6:4",
+        "  5| //This should look good!",
+        "  6|       describe      .",
+        "   |       ^^^^^^^^^^^^^^^",
+        "  6| ",
+        "  7|             only(function() {  ",
+        "   |             ^^^^",
+        "  9|             }); //This should look good!",
+        "",
+        "",
+        "Found `describe[\"only\"]` in mock-file.js:10:4",
+        "  9|             }); //This should look good!",
+        " 10|       describe      ",
+        "   |       ^^^^^^^^",
+        " 10|         [  \"only\"  ]();",
+        "   |         ^^^^^^^^^^^^",
+        " 12| //This should look good!",
+        "",
+        "",
+        "Found `describe['only']` in mock-file.js:13:4",
+        " 12| //This should look good!",
+        " 13|       describe      ",
+        "   |       ^^^^^^^^",
+        " 13|         [ 'only'  ](function() {  ",
+        "   |         ^^^^^^^^^^^",
+        " 15|             });",
         ""
       ].join('\n'));
     }));

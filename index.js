@@ -81,8 +81,9 @@ function ddescribeIit(opt) {
     var result = '';
     if (before !== null) result += (normalize(lines.length, lineNo - 1) + before + '\n');
     result += (normalize(lines.length, lineNo) + current + '\n');
-    result += (normalize(lines.length, lineNo, true) + underline(renderColumn - 1, words[0].length) + '\n');
-    words.shift();
+    var word0 = words.shift().replace(/\s+$/, '');
+
+    result += (normalize(lines.length, lineNo, true) + underline(renderColumn, word0.length) + '\n');
     while (words.length) {
       result += (normalize(lines.length, lineNo) + lines[lineNo++] + '\n');
       var start = /[^\s]/.exec(words[0]);
@@ -229,8 +230,13 @@ function ddescribeIit(opt) {
       var index = pos + match.index + match[1].length;
       var renderIndex = renderPos + renderMatch.index + renderMatch[1].length;
       var wordLines = match[2].split('\n').length;
-      pos = index + match[2].length - 1;
-      renderPos = renderIndex + renderMatch[2].length - 1;
+      if (wordLines > 1) {
+        pos = index + match[2].split('\n').join(' ').length;
+        renderPos = renderIndex + renderMatch[2].split('\n').join(' ').length;
+      } else {
+        pos = index + match[2].length;
+        renderPos = renderIndex + renderMatch[2].length;
+      }
       contents = contents.slice(match.index + match[1].length + match[2].length);
       renderContents = renderContents.slice(renderMatch.index + renderMatch[1].length +
                                             renderMatch[2].length);
@@ -241,7 +247,8 @@ function ddescribeIit(opt) {
       var lineStart = lineStarts[lineNo - 1];
       var renderLineStart = renderLineStarts[lineNo - 1];
       var column = max(1, (index - lineStart) + 1);
-      var renderColumn = max(1, (renderIndex - renderLineStart) + 1);
+      var renderColumn = max(0, (renderIndex - renderLineStart));
+
       var word = match[2].replace(/\t/g, tabString);
       errors.push({
         file: toRelativePath(basePath, file.path),
