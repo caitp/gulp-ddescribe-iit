@@ -74,14 +74,27 @@ function ddescribeIit(opt) {
   }
 
   function makeErrorContext(lines, lineNo, column, word, renderColumn) {
+    var words = word.split('\n');
     var before = lineNo > 1 ? lines[lineNo - 2] : null;
-    var after = lineNo < lines.length ? lines[lineNo] : null;
     var current = lines[lineNo - 1];
 
     var result = '';
     if (before !== null) result += (normalize(lines.length, lineNo - 1) + before + '\n');
     result += (normalize(lines.length, lineNo) + current + '\n');
-    result += (normalize(lines.length, lineNo, true) + underline(renderColumn - 1, word.length) + '\n');
+    result += (normalize(lines.length, lineNo, true) + underline(renderColumn - 1, words[0].length) + '\n');
+    words.shift();
+    while (words.length) {
+      result += (normalize(lines.length, lineNo) + lines[lineNo++] + '\n');
+      var start = /[^\s]/.exec(words[0]);
+      if (start) {
+        start = start.index;
+        var end = /\s*$/.exec(words[0].slice(start));
+        end = end ? end.index : words[0].length;
+        result += (normalize(lines.length, lineNo, true) + underline(start, end) + '\n');
+      }
+      words.shift();
+    }
+    var after = lineNo < lines.length ? lines[lineNo] : null;
     if (after !== null) result += (normalize(lines.length, lineNo + 1) + after + '\n');
 
     return result;
@@ -215,6 +228,7 @@ function ddescribeIit(opt) {
       var renderMatch = regexp.exec(renderContents);
       var index = pos + match.index + match[1].length;
       var renderIndex = renderPos + renderMatch.index + renderMatch[1].length;
+      var wordLines = match[2].split('\n').length;
       pos = index + match[2].length - 1;
       renderPos = renderIndex + renderMatch[2].length - 1;
       contents = contents.slice(match.index + match[1].length + match[2].length);
@@ -223,17 +237,18 @@ function ddescribeIit(opt) {
 
       // Location of error
       var lineNo = originalContents.substr(0, pos).split('\n').length;
+      if (wordLines > 1) lineNo -= wordLines - 1;
       var lineStart = lineStarts[lineNo - 1];
       var renderLineStart = renderLineStarts[lineNo - 1];
       var column = max(1, (index - lineStart) + 1);
       var renderColumn = max(1, (renderIndex - renderLineStart) + 1);
-
+      var word = match[2].replace(/\t/g, tabString);
       errors.push({
         file: toRelativePath(basePath, file.path),
-        str: match[2],
+        str: simplifyString(match[2]),
         line: lineNo,
         column: column,
-        context: makeErrorContext(renderLines, lineNo, column, match[2], renderColumn)
+        context: makeErrorContext(renderLines, lineNo, column, word, renderColumn)
       });
     }
     cb();
@@ -241,7 +256,8 @@ function ddescribeIit(opt) {
     if (errors.length) {
       var error = new PluginError('gulp-ddescribe-iit', {
         message: '\n' + errors.map(function(error) {
-          return 'Found `' + error.str + '` in ' + error.file + ':' + error.line + ':' + error.column + '\n' +
+          return 'Found `' + error.str + '` in ' +
+                 error.file + ':' + error.line + ':' + error.column + '\n' +
                  error.context;
         }).join('\n\n'),
         showStack: false,
@@ -252,6 +268,26 @@ function ddescribeIit(opt) {
       cb();
     }
   });
+
+  function simplifyString(str) {
+    return str.
+              replace(/\s+/g, '').
+              replace(/(\\u([0-9a-fA-F]{4}))/g, replaceHex).
+              replace(/(\\u\\{[0-9a-fA-F]+\\})/g, replaceHex).
+              replace(/(\\x([0-9a-fA-F]{2}))/g, replaceHex).
+              replace(/(\\([0-7]{1, 3}))/g, replaceOctal).
+              replace(/(\\(.))/g, function($0, $1, $2) {
+                return $2;
+              });
+
+    function replaceHex($0, $1, $2) {
+      return String.fromCharCode(parseInt($2, 16));
+    }
+
+    function replaceOctal($0, $1, $2) {
+      return String.fromCharCode(parseInt($2, 8));
+    }
+  }
 
   // Stylize that output :D
   function max(a, b) {

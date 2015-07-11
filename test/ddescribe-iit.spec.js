@@ -439,27 +439,27 @@ describe('gulp-ddescribe-iit', function() {
       called = true;
       expect(err.message).to.eql([
         "",
-        "Found `describe  .only` in mock-file.js:1:1",
+        "Found `describe.only` in mock-file.js:1:1",
         " 1| describe  .only();",
         "  | ^^^^^^^^^^^^^^^",
         " 2| describe.  only();",
         "",
         "",
-        "Found `describe.  only` in mock-file.js:2:1",
+        "Found `describe.only` in mock-file.js:2:1",
         " 1| describe  .only();",
         " 2| describe.  only();",
         "  | ^^^^^^^^^^^^^^^",
         " 3| describe  .  only();",
         "",
         "",
-        "Found `describe  .  only` in mock-file.js:3:1",
+        "Found `describe.only` in mock-file.js:3:1",
         " 2| describe.  only();",
         " 3| describe  .  only();",
         "  | ^^^^^^^^^^^^^^^^^",
         " 4| describe  [\"only\"]();",
         "",
         "",
-        "Found `describe  [\"only\"]` in mock-file.js:4:1",
+        "Found `describe[\"only\"]` in mock-file.js:4:1",
         " 3| describe  .  only();",
         " 4| describe  [\"only\"]();",
         "  | ^^^^^^^^^^^^^^^^^^",
@@ -473,14 +473,14 @@ describe('gulp-ddescribe-iit', function() {
         " 6| describe[  \"only\"  ]();",
         "",
         "",
-        "Found `describe[  \"only\"  ]` in mock-file.js:6:1",
+        "Found `describe[\"only\"]` in mock-file.js:6:1",
         " 5| describe[\"only\"]();",
         " 6| describe[  \"only\"  ]();",
         "  | ^^^^^^^^^^^^^^^^^^^^",
         " 7| describe  ['only']();",
         "",
         "",
-        "Found `describe  ['only']` in mock-file.js:7:1",
+        "Found `describe['only']` in mock-file.js:7:1",
         " 6| describe[  \"only\"  ]();",
         " 7| describe  ['only']();",
         "  | ^^^^^^^^^^^^^^^^^^",
@@ -494,10 +494,41 @@ describe('gulp-ddescribe-iit', function() {
         " 9| describe[  'only'  ]()",
         "",
         "",
-        "Found `describe[  'only'  ]` in mock-file.js:9:1",
+        "Found `describe['only']` in mock-file.js:9:1",
         " 8| describe['only']();",
         " 9| describe[  'only'  ]()",
         "  | ^^^^^^^^^^^^^^^^^^^^",
+        ""
+      ].join('\n'));
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
+
+
+  it('should report errors correctly when split across newlines', function(done) {
+    var mockFile = new File({
+      path: 'mock-file.js',
+      contents: new Buffer(
+        '\n\t  describe  \t.\n\n\t\t\tonly();\n//This should look good!')
+    });
+    stream = ddescribeIit({ noColor: true });
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.message).to.eql([
+        "",
+        "Found `describe.only` in mock-file.js:2:4",
+        " 1| ",
+        " 2|       describe      .",
+        "  |       ^^^^^^^^^^^^^^^",
+        " 2| ",
+        " 3|             only();",
+        "  |             ^^^^",
+        " 5| //This should look good!",
         ""
       ].join('\n'));
     }));
