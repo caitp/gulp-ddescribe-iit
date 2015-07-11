@@ -2,6 +2,7 @@ gulp-ddescribe-iit
 ==================
 
 [![Build Status](https://travis-ci.org/caitp/gulp-ddescribe-iit.svg?branch=master)](https://travis-ci.org/caitp/gulp-ddescribe-iit)
+[![Coverage Status](https://img.shields.io/coveralls/caitp/gulp-ddescribe-iit.svg)](https://coveralls.io/r/caitp/gulp-ddescribe-iit?branch=master)
 [![dependencies](https://img.shields.io/david/caitp/gulp-ddescribe-iit.svg?style=flat)](https://david-dm.org/caitp/gulp-ddescribe-iit)
 [![NPM Version](http://img.shields.io/npm/v/gulp-ddescribe-iit.svg)](https://www.npmjs.org/package/gulp-ddescribe-iit)
 
