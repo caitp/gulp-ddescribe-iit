@@ -513,7 +513,7 @@ describe('gulp-ddescribe-iit', function() {
     var mockFile = new File({
       path: 'mock-file.js',
       contents: new Buffer(
-        '\n\t  describe  \t.\n\n\t\t\tonly();\n//This should look good!')
+        '\n\t  describe  \t.\n\n\t\t\tonly(function() {  \n});//This should look good!')
     });
     stream = ddescribeIit({ noColor: true });
     var called = false;
@@ -526,9 +526,9 @@ describe('gulp-ddescribe-iit', function() {
         " 2|       describe      .",
         "  |       ^^^^^^^^^^^^^^^",
         " 2| ",
-        " 3|             only();",
+        " 3|             only(function() {  ",
         "  |             ^^^^",
-        " 5| //This should look good!",
+        " 5| });//This should look good!",
         ""
       ].join('\n'));
     }));
