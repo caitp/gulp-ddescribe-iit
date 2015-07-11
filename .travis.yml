@@ -2,3 +2,14 @@ language: node_js
 node_js:
   - '0.10'
   - '0.12'
+
+install:
+  - npm install
+  - npm install istanbul coveralls
+
+script:
+  - ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --reporter dot
+
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
