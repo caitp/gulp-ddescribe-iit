@@ -9,6 +9,7 @@ module.exports = ddescribeIit;
 function ddescribeIit(opt) {
   'use strict';
   opt = opt || { allowDisabledTests: true, noColor: false };
+  // istanbul ignore next --- To many variables to cover in testing
   var supports_colors = (function() {
     if (opt.noColor) return false;
     if (process.argv.indexOf('--no-color') !== -1) return false;
@@ -185,7 +186,7 @@ function ddescribeIit(opt) {
       }
       if (len === 1) x = '000' + x;
       else if (len === 2) x = '00' + x;
-      else if (len === 3) x = '0' + x;
+      // TODO(@caitp): Add support for > 8bit codepoints if ever needed
       return x;
     }
 
