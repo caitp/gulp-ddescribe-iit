@@ -7,7 +7,7 @@ gulp-ddescribe-iit
 [![NPM Version](http://img.shields.io/npm/v/gulp-ddescribe-iit.svg)](https://www.npmjs.org/package/gulp-ddescribe-iit)
 
 Based on @btford's [grunt-ddescribe-iit](https://github.com/btford/grunt-ddescribe-iit),
-with a gulp and ANSI color makeover.
+with a gulp and ANSI color makeover. Consider using [gulp-acorn-ddescribe-iit](https://github.com/caitp/gulp-acorn-ddescribe-iit) to minimize false positives. If submitting patches, please submit patches to both projects, or at least file a bug to make sure they maintain feature parity.
 
 ## Hows it look!?
 
