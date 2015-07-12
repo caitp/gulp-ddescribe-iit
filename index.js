@@ -9,9 +9,9 @@ module.exports = ddescribeIit;
 function ddescribeIit(opt) {
   'use strict';
   opt = opt || { allowDisabledTests: true, noColor: false };
-  // istanbul ignore next --- To many variables to cover in testing
-  var supports_colors = (function() {
-    if (opt.noColor) return false;
+  var noColor = getOrDefault(opt, 'noColor', false);
+  var supports_colors =  !noColor || /* istanbul ignore next */ (function() {
+    // E2E testable, but trivial --- ignored
     if (process.argv.indexOf('--no-color') !== -1) return false;
     if (process.stdout && !process.stdout.isTTY) return false;
     if (process.platform === 'win32') return true;
