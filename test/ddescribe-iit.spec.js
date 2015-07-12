@@ -581,7 +581,6 @@ describe('gulp-ddescribe-iit', function() {
         "describe[\"\\x6Fnl\\u{79}\"]();"
         ].join('\n'))
     });
-    console.log(mockFile.contents.toString());
     stream = ddescribeIit({ noColor: true });
     var called = false;
     stream.once('error', step(function(err) {
