@@ -571,7 +571,7 @@ describe('gulp-ddescribe-iit', function() {
   });
 
 
-  it.only('should simplify escaped codepoints in reports', function(done) {
+  it('should simplify escaped codepoints in reports', function(done) {
     var mockFile = new File({
       path: 'mock-file.js',
       contents: new Buffer([
