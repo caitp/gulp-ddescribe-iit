@@ -578,7 +578,8 @@ describe('gulp-ddescribe-iit', function() {
         "ddescrib\\u0065();",
         "it['\\157nly']();",
         "ddescrib\\u{65} ();",
-        "describe[\"\\x6Fnl\\u{79}\"]();"
+        "describe[\"\\x6Fnl\\u{79}\"]();",
+        "it['\\o\\n\\l\\y']();"
         ].join('\n'))
     });
     stream = ddescribeIit({ noColor: true });
@@ -611,6 +612,13 @@ describe('gulp-ddescribe-iit', function() {
         " 3| ddescrib\\u{65} ();",
         " 4| describe[\"\\x6Fnl\\u{79}\"]();",
         "  | ^^^^^^^^^^^^^^^^^^^^^^^^",
+        " 5| it['\\o\\n\\l\\y']();",
+        "",
+        "",
+        "Found `it['only']` in mock-file.js:5:1",
+        " 4| describe[\"\\x6Fnl\\u{79}\"]();",
+        " 5| it['\\o\\n\\l\\y']();",
+        "  | ^^^^^^^^^^^^^^",
         ""
       ].join('\n'));
     }));

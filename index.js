@@ -164,7 +164,7 @@ function ddescribeIit(opt) {
         // HexEscapeSequence :: x HexDigit HexDigit
         var hex = '\\\\x' + x.slice(2);
         var octal = '\\\\' + o;
-        s += '(?:' + c + '|(?:' + unicode1 + ')|(?:' + unicode2 + ')|(?:' + hex + ')|(?:' + octal + '))';
+        s += '(?:' + c + '|(?:\\\\' + c + ')|(?:' + unicode1 + ')|(?:' + unicode2 + ')|(?:' + hex + ')|(?:' + octal + '))';
       }
       return s;
     }
