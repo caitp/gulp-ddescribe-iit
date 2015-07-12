@@ -569,4 +569,56 @@ describe('gulp-ddescribe-iit', function() {
     });
     stream.end(mockFile);
   });
+
+
+  it.only('should simplify escaped codepoints in reports', function(done) {
+    var mockFile = new File({
+      path: 'mock-file.js',
+      contents: new Buffer([
+        "ddescrib\\u0065();",
+        "it['\\157nly']();",
+        "ddescrib\\u{65} ();",
+        "describe[\"\\x6Fnl\\u{79}\"]();"
+        ].join('\n'))
+    });
+    console.log(mockFile.contents.toString());
+    stream = ddescribeIit({ noColor: true });
+    var called = false;
+    stream.once('error', step(function(err) {
+      called = true;
+      expect(err.message).to.eql([
+        "",
+        "Found `ddescribe` in mock-file.js:1:1",
+        " 1| ddescrib\\u0065();",
+        "  | ^^^^^^^^^^^^^^",
+        " 2| it['\\157nly']();",
+        "",
+        "",
+        "Found `it['only']` in mock-file.js:2:1",
+        " 1| ddescrib\\u0065();",
+        " 2| it['\\157nly']();",
+        "  | ^^^^^^^^^^^^^",
+        " 3| ddescrib\\u{65} ();",
+        "",
+        "",
+        "Found `ddescribe` in mock-file.js:3:1",
+        " 2| it['\\157nly']();",
+        " 3| ddescrib\\u{65} ();",
+        "  | ^^^^^^^^^^^^^^",
+        " 4| describe[\"\\x6Fnl\\u{79}\"]();",
+        "",
+        "",
+        "Found `describe[\"only\"]` in mock-file.js:4:1",
+        " 3| ddescrib\\u{65} ();",
+        " 4| describe[\"\\x6Fnl\\u{79}\"]();",
+        "  | ^^^^^^^^^^^^^^^^^^^^^^^^",
+        ""
+      ].join('\n'));
+    }));
+    stream.once('finish', function() {
+      expect(called).to.eql(true);
+      done();
+    });
+    stream.end(mockFile);
+  });
 });

@@ -145,8 +145,8 @@ function ddescribeIit(opt) {
         // UnicodeEscapeSequence :: u Hex4Digits
         var unicode1 = '\\\\u' + x;
         // UnicodeEscapeSequence :: u { Hex4Digits }
-        var unicode2 = '\\\\u\\{' + x + '\\}';
-        s += '(?:' + c + '|' + unicode1 + '|' + unicode2 + ')';
+        var unicode2 = '\\\\u\\{0*' + x.slice(2) + '\\}';
+        s += '(?:' + c + '|(?:' + unicode1 + ')|(?:' + unicode2 + '))';
       }
       return s;
     }
@@ -160,7 +160,7 @@ function ddescribeIit(opt) {
         // UnicodeEscapeSequence :: u Hex4Digits
         var unicode1 = '\\\\u' + x;
         // UnicodeEscapeSequence :: u { Hex4Digits }
-        var unicode2 = '\\\\u\\{' + x + '\\}';
+        var unicode2 = '\\\\u\\{0*' + x.slice(2) + '\\}';
         // HexEscapeSequence :: x HexDigit HexDigit
         var hex = '\\\\x' + x.slice(2);
         var octal = '\\\\' + o;
@@ -178,7 +178,7 @@ function ddescribeIit(opt) {
         c >>= 4;
         ++len;
         if (/[a-f]/.test(d)) {
-          x = '\\[' + d + d.toUpperCase() + '\\]' + x;
+          x = '[' + d + d.toUpperCase() + ']' + x;
         } else {
           x = d + x;
         }
@@ -280,9 +280,9 @@ function ddescribeIit(opt) {
     return str.
               replace(/\s+/g, '').
               replace(/(\\u([0-9a-fA-F]{4}))/g, replaceHex).
-              replace(/(\\u\\{[0-9a-fA-F]+\\})/g, replaceHex).
+              replace(/(\\u\{([0-9a-fA-F]+)\})/g, replaceHex).
               replace(/(\\x([0-9a-fA-F]{2}))/g, replaceHex).
-              replace(/(\\([0-7]{1, 3}))/g, replaceOctal).
+              replace(/(\\([0-7]{1,3}))/g, replaceOctal).
               replace(/(\\(.))/g, function($0, $1, $2) {
                 return $2;
               });
