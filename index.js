@@ -166,7 +166,8 @@ function ddescribeIit(opt) {
         // HexEscapeSequence :: x HexDigit HexDigit
         var hex = '\\\\x' + x.slice(2);
         var octal = '\\\\' + o;
-        s += '(?:' + c + '|(?:\\\\' + c + ')|(?:' + unicode1 + ')|(?:' + unicode2 + ')|(?:' + hex + ')|(?:' + octal + '))';
+        var ec = /['"\\nfnrtv]/.test(c) ? '' : ('|(?:\\\\' + c + ')');
+        s += '(?:' + c + ec + '|(?:' + unicode1 + ')|(?:' + unicode2 + ')|(?:' + hex + ')|(?:' + octal + '))';
       }
       return s;
     }
@@ -252,6 +253,7 @@ function ddescribeIit(opt) {
       var renderColumn = max(0, (renderIndex - renderLineStart));
 
       var word = match[2].replace(/\t/g, tabString);
+      console.log(match[2]);
       errors.push({
         file: toRelativePath(basePath, file.path),
         str: simplifyString(match[2]),
@@ -286,6 +288,7 @@ function ddescribeIit(opt) {
               replace(/(\\x([0-9a-fA-F]{2}))/g, replaceHex).
               replace(/(\\([0-7]{1,3}))/g, replaceOctal).
               replace(/(\\(.))/g, function($0, $1, $2) {
+                // SingleCharacterEscape is not found in any matches that matter
                 return $2;
               });
 
