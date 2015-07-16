@@ -86,7 +86,8 @@ function ddescribeIit(opt) {
 
     result += (normalize(lines.length, lineNo, true) + underline(renderColumn, word0.length) + '\n');
     while (words.length) {
-      result += (normalize(lines.length, lineNo) + lines[lineNo++] + '\n');
+      var nextLine = lines[lineNo++];
+      result += (normalize(lines.length, lineNo) + nextLine + '\n');
       var start = /[^\s]/.exec(words[0]);
       if (start) {
         start = start.index;
