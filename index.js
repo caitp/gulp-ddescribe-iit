@@ -253,7 +253,6 @@ function ddescribeIit(opt) {
       var renderColumn = max(0, (renderIndex - renderLineStart));
 
       var word = match[2].replace(/\t/g, tabString);
-      console.log(match[2]);
       errors.push({
         file: toRelativePath(basePath, file.path),
         str: simplifyString(match[2]),
