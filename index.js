@@ -276,8 +276,8 @@ function ddescribeIit(opt) {
       });
       error.raw = errors;
       this.emit('error', error);
-      cb();
     }
+    cb();
   });
 
   function simplifyString(str) {
